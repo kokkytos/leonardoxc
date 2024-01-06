@@ -564,7 +564,29 @@ function initialize() {
 	  name: "Relief"
 	};
 	var reliefMapType = new google.maps.ImageMapType(reliefTypeOptions);
-		
+
+// ******** CyclOSM  layer ***************************
+	var layer;
+    var layerID = 'cyclosm';
+
+	var TILE_URL = 'https://c.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png';
+	     // Create a tile layer, configured to fetch tiles from TILE_URL.
+	layer = new google.maps.ImageMapType({
+        name: layerID,
+        getTileUrl: function(coord, zoom) {
+          console.log(coord);
+          var url = TILE_URL
+            .replace('{x}', coord.x)
+            .replace('{y}', coord.y)
+            .replace('{z}', zoom);
+          return url;
+        },
+        tileSize: new google.maps.Size(256, 256),
+		name: "CyclOSM",
+        minZoom: 1,
+        maxZoom: 20
+      });
+
     var mapOptions= {
             zoom: 8,
 
@@ -581,6 +603,7 @@ function initialize() {
             mapTypeControlOptions: {
                 mapTypeIds: [
 					"Relief",
+					"CyclOSM",
 					google.maps.MapTypeId.ROADMAP,
 					google.maps.MapTypeId.SATELLITE,
 					google.maps.MapTypeId.HYBRID,
@@ -601,6 +624,7 @@ function initialize() {
 
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
     map.mapTypes.set('Relief', reliefMapType);
+	map.mapTypes.set('CyclOSM', layer);
     // map.setMapTypeId('Relief');
 
     skywaysOverlay= new google.maps.ImageMapType({
